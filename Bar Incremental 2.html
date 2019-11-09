@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+  <style>
+    div {
+      text-align: center;
+      display: block;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .progress {
+      width: 20%;
+      background-color: #ddd;
+      display: inline-block;
+    }
+
+    .bar {
+      height: 30px;
+      background-color: #4CAF50;
+      text-align: center;
+      line-height: 30px;
+      color: white;
+    }
+  </style>
+
+  <div id="multtext" style="font-size: 20px;">Current multiplier addition: n=floor(n+0001)</div>
+
+  <div id="prestiges" style="font-size: 18px; visibility: hidden;">Prestiges: 0</div>
+
+  <div id="prestiges2" style="font-size: 18px; visibility: hidden;">Prestiges^2: 0</div>
+
+  <div id="timer">1:40:0000 (5000 ticks)</div>
+
+  <div>
+    <div class="progress">
+      <div class="bar">0%</div>
+    </div>
+  </div>
+
+  <div id="mult" style="visibility: hidden;">Current Multiplier: 0001x</div>
+
+  <div id="multsec" style="visibility: hidden;">Mult/sec: 0</div>
+
+  <div style="visibility: hidden;" id="prestigesbar">
+    <div class="progress">
+      <div class="bar">0%</div>
+    </div>
+  </div>
+
+  <div id="prestigesmult" style="visibility: hidden;">Current Multiplier: 0001x</div>
+
+  <div style="visibility: hidden;" id="prestiges2bar">
+    <div class="progress">
+      <div class="bar">0%</div>
+    </div>
+  </div>
+
+  <div>
+    <div style="font-size: 18px;">Achievements:</div>
+
+    <div>
+      <img style="opacity: 0.6" id="1" src="Achievements\Achieve0.png">
+      <img id="2">
+      <img id="3">
+    </div>
+
+    <div>
+      <img id="4">
+      <img id="5">
+      <img id="6">
+    </div>
+
+    <div>
+      <img id="7">
+      <img id="8">
+      <img id="9">
+    </div>
+  </div>
+
+  <div><textarea id="port" style="resize: none;" rows="4"></textarea></div>
+
+  <div>
+    <button onclick="exportGame()">Export</button>
+    <button onclick="importGame()">Import</button>
+  </div>
+
+  <div id="win" style="font-size: 30px; visibility: hidden;">You Win!</div>
+
+  <script>
+    for (a = 2; a <= 9; a++) {
+      document.getElementById(a).src = "Achievements\\AchieveU.png"
+    }
+    var elem = document.getElementsByClassName('bar')[0].style;
+    var elem2 = document.getElementsByClassName('bar')[1].style;
+    var elem3 = document.getElementsByClassName('bar')[2].style;
+    var player = {
+      amount: 1,
+      milestone: 1,
+      width: "0%",
+      addition: 1,
+      multiplier: 1,
+      power: 1,
+      formula: "*1+1",
+      prestiges: 1,
+      prestiges2: 1,
+      achievements: 0
+    }
+    elem.width = "0%";
+    elem2.width = "0%";
+    elem3.width = "0%";
+    var interval = setInterval(Tick, 20);
+    function Tick() {
+      player.width = elem.width;
+      player.width = parseFloat(player.width) + (player.amount / 50) + "%";
+      if (parseFloat(player.width) >= 100) {
+        player.width = "0%";
+        if (player.achievements == 0) {
+          player.achievements = 1;
+        }
+        if (player.prestiges2 > 1) {
+          player.amount = Math.floor(eval(Math.pow(player.amount, player.power) + player.formula));
+        } else {
+          player.amount = Math.floor(eval(player.amount + player.formula));
+        }
+        if (player.achievements == 1 && player.amount >= 100) {
+          player.achievements = 2;
+        }
+        if (player.amount >= 5000) {
+          if (player.achievements == 2) {
+            player.achievements = 3;
+          }
+          player.prestiges += player.prestiges2;
+          if (player.achievements == 3 && player.prestiges >= 10) {
+            player.achievements = 4;
+          }
+          if (player.achievements == 4 && player.prestiges >= 100) {
+            player.achievements = 5;
+          }
+          if (player.prestiges >= 5000) { 
+            if (player.achievements == 5) {
+              player.achievements = 6;
+            }
+            player.prestiges2++
+            if (player.achievements == 6 && player.prestiges2 >= 10) {
+              player.achievements = 7;
+            }
+            if (player.achievements == 7 && player.prestiges2 >= 100) {
+              player.achievements = 8;
+            }
+            if (player.achievements == 8 && player.prestiges2 >= 5000) {
+              player.achievements = 9;
+            }
+            player.prestiges = player.prestiges2;
+            player.power = (1 + (player.prestiges2 - 1) / 100).toFixed(2);
+          }
+          player.addition = player.prestiges;
+          player.multiplier = (1 + (player.prestiges - 1) / 100).toFixed(2);
+          player.formula = "*" + player.multiplier + "+" + player.addition;
+          player.amount = player.addition;
+        }
+      }
+      updateText();
+    }
+    function makeTimer(x) {
+      var mins = Math.floor(x / 3000);
+      var secs = Math.floor(x / 50);
+      var milisecs = x * 20;
+      return addZero(mins, 2) + ":" + addZero(secs - (mins * 60), 2) + ":" + addZero(milisecs - (secs * 1000), 3);
+    }
+    function addZero(y, z) {
+      var result = "";
+      for (a = y.toString().length; a < z; a++) {
+        result += "0";
+      }
+      result += y;
+      return result;
+    }
+    function exportGame() {
+      document.getElementById('port').value = btoa(JSON.stringify(player));
+    }
+    function importGame() {
+      if (document.getElementById('port').value != "") {
+        player = JSON.parse(atob(document.getElementById('port').value));
+        updateText();
+      }
+    }
+    function updateText() {
+      elem.width = player.width;
+      document.getElementsByClassName('bar')[0].innerHTML = addZero(parseFloat(player.width).toFixed(2),5) + "%";
+      elem2.width = (player.prestiges / 50) + "%";
+      document.getElementsByClassName('bar')[1].innerHTML = addZero((player.prestiges / 50).toFixed(2),5) + "%";
+      elem3.width = (player.prestiges2 / 50) + "%";
+      document.getElementsByClassName('bar')[2].innerHTML = addZero((player.prestiges2 / 50).toFixed(2),5) + "%";
+      var ticks = Math.ceil((5000 / player.amount) - (parseFloat(elem.width) * 50 / player.amount));
+      document.getElementById('timer').innerHTML = makeTimer(ticks) + " (" + addZero(ticks, 4) + " ticks)";
+      if (player.amount > 1) {
+        document.getElementById('mult').innerHTML = "Current Multiplier: " + addZero(player.amount,4) + "x";
+        document.getElementById('mult').style.visibility = "visible";
+      }
+      if (player.amount >= 100 || player.prestiges > 1 || player.prestiges2 > 1) {
+        document.getElementById('multsec').innerHTML = "Mult/sec: " + addZero(Math.floor(50 / Math.ceil(5000 / player.amount)),2);
+        document.getElementById('multsec').style.visibility = "visible";
+      }
+      if (player.prestiges > 1) {
+        document.getElementById('prestiges').innerHTML = "Prestiges: " + addZero(player.prestiges,4);
+        document.getElementById('prestiges').style.visibility = "visible";
+        document.getElementById('prestigesbar').style.visibility = "visible";
+        document.getElementById('multtext').innerHTML = "Current multiplier addition: n=floor(n";
+        if (player.prestiges2 > 1) {
+          document.getElementById('multtext').innerHTML += "^" + addZero(player.power,5);
+        }
+        document.getElementById('multtext').innerHTML += "*" + addZero(player.multiplier,5) + "+" + addZero(player.addition,4) + ")";
+      }
+      if (player.prestiges2 > 1) {
+        document.getElementById('prestiges2').innerHTML = "Prestiges^2: " + addZero(player.prestiges2,4);
+        document.getElementById('prestiges2').style.visibility = "visible";
+        document.getElementById('prestiges2bar').style.visibility = "visible";
+        document.getElementById('prestigesmult').innerHTML = "Current Multiplier: " + addZero(player.prestiges2,4) + "x"
+        document.getElementById('prestigesmult').style.visibility = "visible";
+      }
+      if (player.prestiges2 >= 5000) {
+        document.getElementById('win').style.visibility = "visible";
+        clearInterval(interval);
+      }
+      for (a = 1; a <= player.achievements; a++) {
+        document.getElementById(a).style.opacity = 1;
+        if (a != 9) {
+          document.getElementById(a+1).src = "Achievements\\Achieve" + a + ".png";
+          document.getElementById(a+1).style.opacity = 0.6;
+        }
+      }
+    }
+  </script>
+
+</body>
+
+</html>
