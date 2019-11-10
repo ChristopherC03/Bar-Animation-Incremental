@@ -167,7 +167,7 @@
           player.amount = player.addition;
         }
       }
-      document.cookie = "username=Save; expires=" + new Date(new Date().getTime() + 99999999999);
+      document.cookie = "Save=" + btoa(JSON.stringify(player)); + "; expires=" + new Date(new Date().getTime() + 99999999999);
       // + "; path=/";
       updateText();
     }
