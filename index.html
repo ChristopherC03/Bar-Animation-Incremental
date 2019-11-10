@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 
+<head>
+  <title>Bar Animation Incremental</title>
+</head>
+
 <body>
 
   <style>
@@ -33,7 +37,7 @@
 
   <div id="prestiges2" style="font-size: 18px; visibility: hidden;">Prestiges^2: 0</div>
 
-  <div id="timer">1:40:0000 (5000 ticks)</div>
+  <div id="timer" style="margin-top: 20px;">1:40:0000 (5000 ticks)</div>
 
   <div>
     <div class="progress">
@@ -45,7 +49,7 @@
 
   <div id="multsec" style="visibility: hidden;">Mult/sec: 0</div>
 
-  <div style="visibility: hidden;" id="prestigesbar">
+  <div id="prestigesbar" style="visibility: hidden; margin-top: 20px;">
     <div class="progress">
       <div class="bar">0%</div>
     </div>
@@ -53,14 +57,14 @@
 
   <div id="prestigesmult" style="visibility: hidden;">Current Multiplier: 0001x</div>
 
-  <div style="visibility: hidden;" id="prestiges2bar">
+  <div id="prestiges2bar" style="visibility: hidden; margin-top: 20px;">
     <div class="progress">
       <div class="bar">0%</div>
     </div>
   </div>
 
   <div>
-    <div style="font-size: 18px;">Achievements:</div>
+    <div style="font-size: 18px; margin-top: 20px;">Achievements:</div>
 
     <div>
       <img style="opacity: 0.6" id="1" src="Achievements\Achieve0.png">
@@ -140,7 +144,7 @@
           if (player.achievements == 4 && player.prestiges >= 100) {
             player.achievements = 5;
           }
-          if (player.prestiges >= 5000) { 
+          if (player.prestiges >= 5000) {
             if (player.achievements == 5) {
               player.achievements = 6;
             }
@@ -163,6 +167,8 @@
           player.amount = player.addition;
         }
       }
+      document.cookie = "username=Save; expires=" + new Date(new Date().getTime() + 99999999999);
+      // + "; path=/";
       updateText();
     }
     function makeTimer(x) {
@@ -185,52 +191,69 @@
     function importGame() {
       if (document.getElementById('port').value != "") {
         player = JSON.parse(atob(document.getElementById('port').value));
+        //clearInterval(interval);
+        //var interval = setInterval(Tick, 20);
         updateText();
       }
     }
     function updateText() {
       elem.width = player.width;
-      document.getElementsByClassName('bar')[0].innerHTML = addZero(parseFloat(player.width).toFixed(2),5) + "%";
+      document.getElementsByClassName('bar')[0].innerHTML = addZero(parseFloat(player.width).toFixed(2), 5) + "%";
       elem2.width = (player.prestiges / 50) + "%";
-      document.getElementsByClassName('bar')[1].innerHTML = addZero((player.prestiges / 50).toFixed(2),5) + "%";
+      document.getElementsByClassName('bar')[1].innerHTML = addZero((player.prestiges / 50).toFixed(2), 5) + "%";
       elem3.width = (player.prestiges2 / 50) + "%";
-      document.getElementsByClassName('bar')[2].innerHTML = addZero((player.prestiges2 / 50).toFixed(2),5) + "%";
+      document.getElementsByClassName('bar')[2].innerHTML = addZero((player.prestiges2 / 50).toFixed(2), 5) + "%";
       var ticks = Math.ceil((5000 / player.amount) - (parseFloat(elem.width) * 50 / player.amount));
       document.getElementById('timer').innerHTML = makeTimer(ticks) + " (" + addZero(ticks, 4) + " ticks)";
       if (player.amount > 1) {
-        document.getElementById('mult').innerHTML = "Current Multiplier: " + addZero(player.amount,4) + "x";
+        document.getElementById('mult').innerHTML = "Current Multiplier: " + addZero(player.amount, 4) + "x";
         document.getElementById('mult').style.visibility = "visible";
+      } else {
+        document.getElementById('mult').style.visibility = "hidden";
       }
       if (player.amount >= 100 || player.prestiges > 1 || player.prestiges2 > 1) {
-        document.getElementById('multsec').innerHTML = "Mult/sec: " + addZero(Math.floor(50 / Math.ceil(5000 / player.amount)),2);
+        document.getElementById('multsec').innerHTML = "Mult/sec: " + addZero(Math.floor(50 / Math.ceil(5000 / player.amount)), 2);
         document.getElementById('multsec').style.visibility = "visible";
+      } else {
+        document.getElementById('multsec').style.visibility = "hidden";
       }
       if (player.prestiges > 1) {
-        document.getElementById('prestiges').innerHTML = "Prestiges: " + addZero(player.prestiges,4);
+        document.getElementById('prestiges').innerHTML = "Prestiges: " + addZero(player.prestiges, 4);
         document.getElementById('prestiges').style.visibility = "visible";
         document.getElementById('prestigesbar').style.visibility = "visible";
         document.getElementById('multtext').innerHTML = "Current multiplier addition: n=floor(n";
         if (player.prestiges2 > 1) {
-          document.getElementById('multtext').innerHTML += "^" + addZero(player.power,5);
+          document.getElementById('multtext').innerHTML += "^" + addZero(player.power, 5);
         }
-        document.getElementById('multtext').innerHTML += "*" + addZero(player.multiplier,5) + "+" + addZero(player.addition,4) + ")";
+        document.getElementById('multtext').innerHTML += "*" + addZero(player.multiplier, 5) + "+" + addZero(player.addition, 4) + ")";
+      } else {
+        document.getElementById('prestiges').style.visibility = "hidden";
+        document.getElementById('prestigesbar').style.visibility = "hidden";
+        document.getElementById('multtext').innerHTML = "Current multiplier addition: n=floor(n+0001)"
       }
       if (player.prestiges2 > 1) {
-        document.getElementById('prestiges2').innerHTML = "Prestiges^2: " + addZero(player.prestiges2,4);
+        document.getElementById('prestiges2').innerHTML = "Prestiges^2: " + addZero(player.prestiges2, 4);
         document.getElementById('prestiges2').style.visibility = "visible";
         document.getElementById('prestiges2bar').style.visibility = "visible";
-        document.getElementById('prestigesmult').innerHTML = "Current Multiplier: " + addZero(player.prestiges2,4) + "x"
+        document.getElementById('prestigesmult').innerHTML = "Current Multiplier: " + addZero(player.prestiges2, 4) + "x"
         document.getElementById('prestigesmult').style.visibility = "visible";
+      } else {
+        document.getElementById('prestiges2').style.visibility = "hidden";
+        document.getElementById('prestiges2bar').style.visibility = "hidden";
+        document.getElementById('prestigesmult').style.visibility = "hidden";
       }
       if (player.prestiges2 >= 5000) {
         document.getElementById('win').style.visibility = "visible";
         clearInterval(interval);
+        //how do I *restart* interval (so no double) if importing a save below 5000 prestiges2?
+      } else {
+        document.getElementById('win').style.visibility = "hidden";
       }
       for (a = 1; a <= player.achievements; a++) {
         document.getElementById(a).style.opacity = 1;
         if (a != 9) {
-          document.getElementById(a+1).src = "Achievements\\Achieve" + a + ".png";
-          document.getElementById(a+1).style.opacity = 0.6;
+          document.getElementById(a + 1).src = "Achievements\\Achieve" + a + ".png";
+          document.getElementById(a + 1).style.opacity = 0.6;
         }
       }
     }
