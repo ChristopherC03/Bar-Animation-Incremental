@@ -120,7 +120,6 @@
     for (a = 0; a < cookies.length; a++) {
 	    if (cookies[a].substr(0,5) == "Save=") {
         player = JSON.parse(atob(cookies[a].substr(5)));
-        console.log(player);
 	updateText();
       }
     }
