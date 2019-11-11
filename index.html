@@ -116,6 +116,12 @@
     elem.width = "0%";
     elem2.width = "0%";
     elem3.width = "0%";
+    var cookies = document.cookie.split(';');
+    for (a = 0; a < cookies.length; a++) {
+	    if (cookies[a].substr(0,5) == "Save=") {
+        player = JSON.parse(atob(cookies[a].substr(5)));
+      }
+    }
     var interval = setInterval(Tick, 20);
     function Tick() {
       player.width = elem.width;
@@ -168,7 +174,6 @@
         }
       }
       document.cookie = "Save=" + btoa(JSON.stringify(player)); + "; expires=" + new Date(new Date().getTime() + 99999999999);
-      // + "; path=/";
       updateText();
     }
     function makeTimer(x) {
