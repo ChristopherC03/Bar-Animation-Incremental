@@ -120,7 +120,7 @@
     for (a = 0; a < cookies.length; a++) {
 	    if (cookies[a].substr(0,5) == "Save=") {
         player = JSON.parse(atob(cookies[a].substr(5)));
-	updateText();
+        updateText();
       }
     }
     var interval = setInterval(Tick, 20);
@@ -196,9 +196,15 @@
     }
     function importGame() {
       if (document.getElementById('port').value != "") {
-        player = JSON.parse(atob(document.getElementById('port').value));
-        //clearInterval(interval);
-        //var interval = setInterval(Tick, 20);
+        try {
+          if (player.achievements == 9) {
+            interval = setInterval(Tick, 20);
+          }
+          player = JSON.parse(atob(document.getElementById('port').value));
+        }
+        catch (err) {
+          alert("Not a valid save!");
+        }
         updateText();
       }
     }
@@ -251,16 +257,19 @@
       if (player.prestiges2 >= 5000) {
         document.getElementById('win').style.visibility = "visible";
         clearInterval(interval);
-        //how do I *restart* interval (so no double) if importing a save below 5000 prestiges2?
       } else {
         document.getElementById('win').style.visibility = "hidden";
       }
+      document.getElementById(1).style.opacity = 0.6;
       for (a = 1; a <= player.achievements; a++) {
         document.getElementById(a).style.opacity = 1;
         if (a != 9) {
           document.getElementById(a + 1).src = "Achievements\\Achieve" + a + ".png";
           document.getElementById(a + 1).style.opacity = 0.6;
         }
+      }
+      for (a = player.achievements+2; a <= 9; a++) {
+        document.getElementById(a).src = "Achievements\\AchieveU.png"
       }
     }
   </script>
