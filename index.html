@@ -123,6 +123,7 @@
         console.log(player);
         player = JSON.parse(atob(cookies[a].substr(5)));
         console.log(player);
+	updateText();
       }
     }
     var interval = setInterval(Tick, 20);
