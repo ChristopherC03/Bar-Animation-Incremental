@@ -47,7 +47,7 @@
 
   <div id="mult" style="visibility: hidden;">Current Multiplier: 0001x</div>
 
-  <div id="multsec" style="visibility: hidden;">Mult/sec: 0</div>
+  <div id="multsec" style="visibility: hidden;">Bars/sec: 0</div>
 
   <div id="prestigesbar" style="visibility: hidden; margin-top: 20px;">
     <div class="progress">
@@ -92,6 +92,8 @@
     <button onclick="importGame()">Import</button>
   </div>
 
+  <div><button onclick="confirmReset()">HARD RESET</button></div>
+
   <div id="win" style="font-size: 30px; visibility: hidden;">You Win!</div>
 
   <script>
@@ -118,7 +120,7 @@
     elem3.width = "0%";
     var cookies = document.cookie.split(';');
     for (a = 0; a < cookies.length; a++) {
-	    if (cookies[a].substr(0,5) == "Save=") {
+      if (cookies[a].substr(0, 5) == "Save=") {
         player = JSON.parse(atob(cookies[a].substr(5)));
         updateText();
       }
@@ -208,6 +210,26 @@
         updateText();
       }
     }
+    function confirmReset() {
+      if (confirm("Are you sure?\nThis will reset ALL PROGRESS for no boost!")) {
+        if (player.achievements == 9) {
+          interval = setInterval(Tick, 20);
+        }
+        player = {
+          amount: 1,
+          milestone: 1,
+          width: "0%",
+          addition: 1,
+          multiplier: 1,
+          power: 1,
+          formula: "*1+1",
+          prestiges: 1,
+          prestiges2: 1,
+          achievements: 0
+        }
+        updateText();
+      }
+    }
     function updateText() {
       elem.width = player.width;
       document.getElementsByClassName('bar')[0].innerHTML = addZero(parseFloat(player.width).toFixed(2), 5) + "%";
@@ -224,7 +246,7 @@
         document.getElementById('mult').style.visibility = "hidden";
       }
       if (player.amount >= 100 || player.prestiges > 1 || player.prestiges2 > 1) {
-        document.getElementById('multsec').innerHTML = "Mult/sec: " + addZero(Math.floor(50 / Math.ceil(5000 / player.amount)), 2);
+        document.getElementById('multsec').innerHTML = "Bars/sec: " + addZero(Math.floor(50 / Math.ceil(5000 / player.amount)), 2);
         document.getElementById('multsec').style.visibility = "visible";
       } else {
         document.getElementById('multsec').style.visibility = "hidden";
@@ -261,6 +283,9 @@
         document.getElementById('win').style.visibility = "hidden";
       }
       document.getElementById(1).style.opacity = 0.6;
+      for (a = 2; a <= 9; a++) {
+        document.getElementById(a).style.opacity = 1;
+      }
       for (a = 1; a <= player.achievements; a++) {
         document.getElementById(a).style.opacity = 1;
         if (a != 9) {
@@ -268,7 +293,7 @@
           document.getElementById(a + 1).style.opacity = 0.6;
         }
       }
-      for (a = player.achievements+2; a <= 9; a++) {
+      for (a = player.achievements + 2; a <= 9; a++) {
         document.getElementById(a).src = "Achievements\\AchieveU.png"
       }
     }
