@@ -117,10 +117,8 @@
     elem2.width = "0%";
     elem3.width = "0%";
     var cookies = document.cookie.split(';');
-    console.log(cookies);
     for (a = 0; a < cookies.length; a++) {
 	    if (cookies[a].substr(0,5) == "Save=") {
-        console.log(player);
         player = JSON.parse(atob(cookies[a].substr(5)));
         console.log(player);
 	updateText();
