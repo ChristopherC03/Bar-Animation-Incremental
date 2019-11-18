@@ -162,13 +162,14 @@
     var frameTest = 0;
     var start = window.performance.now();
     var startTest = start;
+	var fpsLimit = 20
     Tick();
     function Tick(newtime) {
       req = requestAnimationFrame(Tick);
       now = newtime;
       elapsed = now - start;
-      if (elapsed > 19.9) {
-        start = now - (elapsed % 19.9)
+      if (elapsed > fpsLimit) {
+        start = now - (elapsed % fpsLimit)
         player.width = elem.width;
         player.width = parseFloat(player.width) + (player.amount / 50) + "%";
         if (parseFloat(player.width) >= 100) {
@@ -219,6 +220,11 @@
           cancelAnimationFrame(req);
           player.paused = 1;
         }
+		if (Math.round(sinceStart / 10) / 100 < 50) {
+		  fpsLimit -= 0.1;
+		} else {
+	      fpsLimit += 0.1;
+		}
       }
     }
     function makeTimer(x) {
@@ -356,7 +362,7 @@
       var sinceStart = now - startTest;
       var currentFps = Math.round(1000 / (sinceStart / ++frameTest) * 100) / 100;
       document.getElementById('fpsTest').innerHTML = (Math.round(sinceStart / 10) / 100).toFixed(2) + "s at " + currentFps.toFixed(2) + "/50.00 fps.";
-    }
+	}
     function Pause() {
       cancelAnimationFrame(req);
       document.getElementById('Pause').style.display = "none";
