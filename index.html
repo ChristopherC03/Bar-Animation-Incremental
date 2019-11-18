@@ -159,6 +159,7 @@
       }
     }
     var now, elapsed, req;
+	  var sinceStart
     var frameTest = 0;
     var start = window.performance.now();
     var startTest = start;
@@ -359,7 +360,7 @@
       for (a = player.achievements + 2; a <= 9; a++) {
         document.getElementById(a).src = "Images\\AchieveU.png"
       }
-      var sinceStart = now - startTest;
+      sinceStart = now - startTest;
       var currentFps = Math.round(1000 / (sinceStart / ++frameTest) * 100) / 100;
       document.getElementById('fpsTest').innerHTML = (Math.round(sinceStart / 10) / 100).toFixed(2) + "s at " + currentFps.toFixed(2) + "/50.00 fps.";
 	}
