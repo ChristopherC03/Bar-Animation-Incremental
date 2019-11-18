@@ -222,7 +222,7 @@
           player.paused = 1;
         }
 		if (Math.round(sinceStart / 10) / 100 < 50) {
-		  fpsLimit = Math.max(fpsLimit-0.1,0);
+		  fpsLimit = Math.max(fpsLimit-0.1,0.1);
 		} else {
 	      fpsLimit += 0.1;
 		}
